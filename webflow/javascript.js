@@ -835,9 +835,7 @@ async function saveTemplateNameChange() {
         
         const result = await response.json();
         
-        if (result.status === 'success') {
-            showMessage('rename-inline-feedback', '✅ Template name updated', 'success');
-            
+    if (result.status === 'success') {
             // Update the current refinement template object
             currentRefinementTemplate.template_name = newName;
             

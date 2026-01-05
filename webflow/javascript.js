@@ -295,10 +295,21 @@ function createPlaceholderRow(ph, index) {
     const action = ph.action || 'no_change';
     const isNoChange = action === 'no_change';
     
-    // Get text values
-    const originalText = ph.original_text || '';
-    const currentText = ph.current_text || originalText;
-    const showCurrentColumn = currentText !== originalText;
+// Get text values and clean them
+const originalText = (ph.original_text || '').trim();
+const currentText = (ph.current_text || originalText).trim();
+const showCurrentColumn = currentText !== originalText && currentText !== '';
+
+// Debug log (remove after testing)
+if (index === 0) {
+    console.log('First placeholder:', {
+        name: ph.name,
+        original_text: originalText,
+        current_text: currentText,
+        original_length: originalText.length,
+        current_length: currentText.length
+    });
+}
     
     // Dynamic text-transform based on action
     const textTransform = action === 'hardcode' ? 'none' : 'uppercase';
@@ -1282,6 +1293,36 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+// ==========================================
+// ==========================================
+// DEBUG: Check Placeholder Data
+// ==========================================
+function debugPlaceholderData() {
+    console.log('=== PLACEHOLDER DEBUG ===');
+    console.log('Current refinement template:', currentRefinementTemplate);
+    console.log('Total placeholders:', currentPlaceholders.length);
+    
+    if (currentPlaceholders.length > 0) {
+        console.log('\nFirst 3 placeholders:');
+        currentPlaceholders.slice(0, 3).forEach((ph, idx) => {
+            console.log(`\n${idx + 1}. ${ph.name}`);
+            console.log('  original_text:', ph.original_text);
+            console.log('  current_text:', ph.current_text);
+            console.log('  original_length:', ph.original_text?.length || 0);
+            console.log('  current_length:', ph.current_text?.length || 0);
+            console.log('  category:', ph.category);
+            console.log('  last_action:', ph.last_action);
+        });
+    }
+    
+    console.log('\n=== END DEBUG ===');
+}
+
+// Add button to modal for testing (temporary)
+window.debugPlaceholderData = debugPlaceholderData;
+// ==========================================
+// ==========================================
 
 function sendSupportTicket() {
     const subject = 'Quote Tool Support Request';

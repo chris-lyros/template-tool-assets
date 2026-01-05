@@ -794,16 +794,16 @@
         max-height: 80px;
         overflow-y: auto;
         line-height: 1.4;
-        text-align: left !important;
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-start;
+        text-align: left
         vertical-align: top;
     }
     
     .readonly-field.multiline {
         white-space: pre-wrap;
         display: block;
+        text-align: left;
+        padding-top: 8px;
+        padding-left: 10px;
     }
     
     .current-text-display {

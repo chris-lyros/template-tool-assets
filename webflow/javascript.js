@@ -318,12 +318,12 @@ function createPlaceholderRow(ph, index) {
 	<div class="placeholder-field">
 	    ${showCurrentColumn ? `
 	        <label>Current Text ⚡</label>
-	        <div class="readonly-field multiline current-text-display" style="background: rgba(16, 185, 129, 0.1); border-color: #10b981;">
+	        <div class="readonly-field multiline current-text-display" style="background: rgba(16, 185, 129, 0.1); border-color: #10b981; text-align: left !important; vertical-align: top !important; display: block !important; padding-top: 8px !important;">
 		${escapeHtml(currentText)}
 	        </div>
 	        <label style="margin-top: 12px;">Original Text (for reference)</label>
 	    ` : '<label>Original Text</label>'}
-	    <div class="readonly-field multiline">
+	    <div class="readonly-field multiline" style="text-align: left !important; vertical-align: top !important; display: block !important; padding-top: 8px !important;">
 	        ${escapeHtml(originalText)}
 	    </div>
 	</div>	

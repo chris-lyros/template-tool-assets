@@ -306,31 +306,7 @@ function createPlaceholderRow(ph, index) {
     return `
 <div class="placeholder-row ${isNoChange ? 'row-disabled' : ''}" data-index="${index}">
 	
-	<!-- ✅ COLUMN 1: ACTION -->
-	<div class="placeholder-field action-field-highlight">
-	    <div class="label-with-tooltip">
-	        <label>Action</label>
-	        <span class="tooltip" data-tooltip="Rename: Replace with [PLACEHOLDER_NAME] | Hardcode: Replace with exact value | No Change: Skip this field">?</span>
-	    </div>
-	    <select id="ph-action-${index}">
-	        <option value="no_change" ${action === 'no_change' ? 'selected' : ''}>⚫ No Change</option>
-	        <option value="rename" ${action === 'rename' ? 'selected' : ''}>🔧 Rename</option>
-	        <option value="hardcode" ${action === 'hardcode' ? 'selected' : ''}>📌 Hardcode</option>
-	    </select>
-	</div>
-	
-	<!-- ✅ COLUMN 2: PLACEHOLDER NAME -->
-	<div class="placeholder-field">
-	    <label>Placeholder Name</label>
-	    <input type="text" 
-	           id="ph-name-${index}" 
-	           value="${escapeHtml(ph.name || '')}" 
-	           placeholder="e.g., CLIENT_NAME"
-	           ${isNoChange ? 'disabled' : ''}
-	           style="text-transform: ${textTransform};" />
-	</div>
-	
-	<!-- ✅ COLUMN 3: CURRENT TEXT -->
+	<!-- ✅ COLUMN 1: CURRENT TEXT (moved to first position) -->
 	<div class="placeholder-field">
 	    ${showCurrentColumn ? `
 	        <label>Current Text ⚡</label>
@@ -342,6 +318,30 @@ function createPlaceholderRow(ph, index) {
 	    <div class="readonly-field multiline">
 	        ${escapeHtml(originalText)}
 	    </div>
+	</div>
+	
+	<!-- ✅ COLUMN 2: ACTION -->
+	<div class="placeholder-field action-field-highlight">
+	    <div class="label-with-tooltip">
+	        <label>Action</label>
+	        <span class="tooltip tooltip-multiline" data-tooltip="Rename: Replace with [PLACEHOLDER_NAME]\nHardcode: Replace with exact value\nNo Change: Skip this field">?</span>
+	    </div>
+	    <select id="ph-action-${index}">
+	        <option value="no_change" ${action === 'no_change' ? 'selected' : ''}>⚫ No Change</option>
+	        <option value="rename" ${action === 'rename' ? 'selected' : ''}>🔧 Rename</option>
+	        <option value="hardcode" ${action === 'hardcode' ? 'selected' : ''}>📌 Hardcode</option>
+	    </select>
+	</div>
+	
+	<!-- ✅ COLUMN 3: PLACEHOLDER NAME -->
+	<div class="placeholder-field">
+	    <label>Placeholder Name</label>
+	    <input type="text" 
+	           id="ph-name-${index}" 
+	           value="${escapeHtml(ph.name || '')}" 
+	           placeholder="e.g., CLIENT_NAME"
+	           ${isNoChange ? 'disabled' : ''}
+	           style="text-transform: ${textTransform};" />
 	</div>
 	
 	<!-- ✅ COLUMN 4: PREVIEW RESULT -->

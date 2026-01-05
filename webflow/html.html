@@ -36,14 +36,13 @@
 </div>
 
 <!-- ==========================================
-     ✏️ EDIT TEMPLATE MODAL - UPDATED VERSION
+     ✏️ EDIT TEMPLATE MODAL - FINAL VERSION
      ========================================== -->
 
 <div id="refine-modal" class="modal-overlay">
     <div class="modal modal-large">
-        <h3>✏️ Edit Template</h3>
         
-        <!-- ✨ NEW: Inline Rename Field -->
+        <!-- ✨ Inline Rename Field (NO HEADER) -->
         <div class="edit-template-name-section">
             <label>Template Name</label>
             <div class="rename-input-wrapper">
@@ -67,11 +66,8 @@
         
         <div id="refine-feedback" class="feedback-message"></div>
         
-        <!-- TAB 1: AI PLACEHOLDERS -->
+        <!-- TAB 1: AI PLACEHOLDERS (NO GREEN BOX) -->
         <div id="ai-placeholders-tab" class="tab-content active">
-            <div class="tab-header-simple">
-                <p>Use the Action dropdown to make changes</p>
-            </div>
             <div id="placeholder-editor-container">
                 <p style="text-align: center; color: #888;">Loading placeholders...</p>
             </div>
@@ -86,7 +82,7 @@
                 <div class="form-group-manual">
                     <div class="label-with-tooltip">
                         <label>Text to Find</label>
-                        <span class="tooltip" data-tooltip="Type or paste text from your template that you want to replace">?</span>
+                        <span class="tooltip tooltip-multiline" data-tooltip="Type or paste text from your template that you want to replace">?</span>
                     </div>
                     <div class="autocomplete-wrapper">
                         <textarea id="manual-search-text" 
@@ -102,7 +98,7 @@
                     <div class="form-col-action">
                         <div class="label-with-tooltip">
                             <label>Action</label>
-                            <span class="tooltip" data-tooltip="Rename: Replace with [PLACEHOLDER_NAME] | Hardcode: Replace with exact value you type | No Change: Skip this field">?</span>
+                            <span class="tooltip tooltip-multiline" data-tooltip="Rename: Replace with [PLACEHOLDER_NAME] | Hardcode: Replace with exact value you type | No Change: Skip this field">?</span>
                         </div>
                         <select id="manual-action-select">
                             <option value="replace">Replace with Placeholder</option>
@@ -112,7 +108,7 @@
                     <div class="form-col-placeholder">
                         <div class="label-with-tooltip">
                             <label>Placeholder Name</label>
-                            <span class="tooltip" data-tooltip="For placeholders, use UPPER_CASE names. For hardcode, type the exact replacement text.">?</span>
+                            <span class="tooltip tooltip-multiline" data-tooltip="For placeholders, use UPPER_CASE names. For hardcode, type the exact replacement text.">?</span>
                         </div>
                         <input type="text" id="manual-placeholder-name" 
                                placeholder="PLACEHOLDER_NAME or Fixed replaceable text"
@@ -123,10 +119,10 @@
                 
                 <!-- Buttons Row -->
                 <div class="form-buttons-row">
-                    <button class="btn btn-secondary btn-reset" onclick="resetManualForm()">
+                    <button class="btn btn-secondary btn-reset-manual" onclick="resetManualForm()">
                         🔄 Reset
                     </button>
-                    <button class="btn btn-primary btn-add" onclick="addManualPlaceholder()">
+                    <button class="btn btn-primary btn-add-manual" onclick="addManualPlaceholder()">
                         ✅ Add to List Below
                     </button>
                 </div>
@@ -194,7 +190,7 @@
                             <div class="form-group">
                                 <div class="label-with-tooltip">
                                     <label>Upload Information for Quote Generation</label>
-                                    <span class="tooltip" data-tooltip="Upload RFT, scope docs, or tender documents">?</span>
+                                    <span class="tooltip tooltip-multiline" data-tooltip="Upload RFT, scope docs, or tender documents">?</span>
                                 </div>
                                 <div class="upload-zone" id="quote-upload-zone">
                                     <div class="icon">📄</div>

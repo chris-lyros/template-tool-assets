@@ -200,7 +200,8 @@ async function loadUserTemplates() {
 async function openRefineModal(templateId, templateName) {
     currentRefinementTemplate = { template_id: templateId, template_name: templateName };
     
-    document.getElementById('refine-template-name').textContent = templateName;
+    // ✅ Set the template name in the inline rename field
+    document.getElementById('edit-template-name-input').value = templateName;
     document.getElementById('refine-modal').classList.add('active');
 
 // Reset manual placeholders list
@@ -269,17 +270,7 @@ async function openRefineModal(templateId, templateName) {
 function renderPlaceholderEditor() {
     const container = document.getElementById('placeholder-editor-container');
     
-    container.innerHTML = `
-        <div class="placeholder-editor-header">
-	<p style="color: #ddd; font-size: 12px; margin-bottom: 8px; line-height: 1.6; font-weight: 600;">
-	    Review AI-detected placeholders. Use the <strong style="color: #10b981;">Action</strong> dropdown to choose:
-	</p>
-	<p style="color: #888; font-size: 11px; margin: 0; line-height: 1.5;">
-	    • <strong style="color: #10b981;">Rename</strong> = Replace with [PLACEHOLDER_NAME]<br>
-	    • <strong style="color: #f59e0b;">Hardcode</strong> = Replace with exact value you type<br>
-	    • <strong style="color: #666;">No Change</strong> = Skip this field (default)
-	</p>
-        </div>
+container.innerHTML = `
         <div class="placeholder-editor">
 	${currentPlaceholders.map((ph, index) => createPlaceholderRow(ph, index)).join('')}
         </div>
@@ -313,8 +304,34 @@ function createPlaceholderRow(ph, index) {
     // Dynamic text-transform based on action
     const textTransform = action === 'hardcode' ? 'none' : 'uppercase';
     
-    return `
+return `
 <div class="placeholder-row ${isNoChange ? 'row-disabled' : ''}" data-index="${index}">
+	
+	<!-- ✅ COLUMN 1: ACTION (moved to first position) -->
+	<div class="placeholder-field action-field-highlight">
+	    <div class="label-with-tooltip">
+	        <label>Action</label>
+	        <span class="tooltip" data-tooltip="Rename: Replace with [PLACEHOLDER_NAME] | Hardcode: Replace with exact value | No Change: Skip this field">?</span>
+	    </div>
+	    <select id="ph-action-${index}">
+	        <option value="no_change" ${action === 'no_change' ? 'selected' : ''}>⚫ No Change</option>
+	        <option value="rename" ${action === 'rename' ? 'selected' : ''}>🔧 Rename</option>
+	        <option value="hardcode" ${action === 'hardcode' ? 'selected' : ''}>📌 Hardcode</option>
+	    </select>
+	</div>
+	
+	<!-- ✅ COLUMN 2: PLACEHOLDER NAME -->
+	<div class="placeholder-field">
+	    <label>Placeholder Name</label>
+	    <input type="text" 
+	           id="ph-name-${index}" 
+	           value="${escapeHtml(ph.name || '')}" 
+	           placeholder="e.g., CLIENT_NAME"
+	           ${isNoChange ? 'disabled' : ''}
+	           style="text-transform: ${textTransform};" />
+	</div>
+	
+	<!-- ✅ COLUMN 3: CURRENT TEXT (moved to third position) -->
 	<div class="placeholder-field">
 	    ${showCurrentColumn ? `
 	        <label>Current Text ⚡</label>
@@ -615,6 +632,25 @@ function removeManualPlaceholder(index) {
     updateManualCount();
 }
 
+function resetManualForm() {
+    document.getElementById('manual-search-text').value = '';
+    document.getElementById('manual-placeholder-name').value = '';
+    document.getElementById('manual-action-select').value = 'replace';
+    
+    // Hide autocomplete suggestions
+    const suggestionsContainer = document.getElementById('autocomplete-suggestions');
+    if (suggestionsContainer) {
+        suggestionsContainer.classList.remove('active');
+        suggestionsContainer.innerHTML = '';
+    }
+    
+    // Hide any feedback messages
+    hideMessage('refine-feedback');
+    
+    // Focus back to text area
+    document.getElementById('manual-search-text').focus();
+}
+
 function updateManualCount() {
     const countElement = document.getElementById('manual-count');
     if (countElement) {
@@ -780,6 +816,65 @@ function closeRefineModal() {
     hideMessage('refine-feedback');
 }
 
+// ==========================================
+// INLINE TEMPLATE RENAME FUNCTION
+// ==========================================
+
+async function saveTemplateNameChange() {
+    const newName = document.getElementById('edit-template-name-input').value.trim();
+    
+    if (!newName) {
+        showMessage('rename-inline-feedback', '⚠️ Please enter a template name', 'error');
+        return;
+    }
+    
+    if (!currentRefinementTemplate) {
+        showMessage('rename-inline-feedback', '⚠️ No template selected', 'error');
+        return;
+    }
+    
+    const saveButton = document.querySelector('.btn-save-rename');
+    const originalHTML = saveButton.innerHTML;
+    
+    saveButton.disabled = true;
+    saveButton.innerHTML = '<span class="spinner" style="width: 12px; height: 12px; border-width: 2px;"></span>';
+    hideMessage('rename-inline-feedback');
+    
+    try {
+        const response = await fetch('https://n8n.lyroshq.com/webhook/quote-rename-template', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_email: authenticatedUserEmail,
+                template_id: currentRefinementTemplate.template_id,
+                new_name: newName
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            showMessage('rename-inline-feedback', '✅ Template name updated', 'success');
+            
+            // Update the current refinement template object
+            currentRefinementTemplate.template_name = newName;
+            
+            // Reload templates in background
+            loadUserTemplates();
+            
+            // Auto-hide success message after 2 seconds
+            setTimeout(() => hideMessage('rename-inline-feedback'), 2000);
+        } else {
+            showMessage('rename-inline-feedback', `⚠️ ${result.message || 'Failed to rename template'}`, 'error');
+        }
+    } catch (error) {
+        console.error('Rename Error:', error);
+        showMessage('rename-inline-feedback', '⚠️ An error occurred during rename', 'error');
+    } finally {
+        saveButton.disabled = false;
+        saveButton.innerHTML = originalHTML;
+    }
+}
 
 // TAB SWITCHING FUNCTION
 
@@ -869,74 +964,6 @@ async function confirmDeleteTemplate() {
         button.innerHTML = originalText;
     }
 }
-
-
-// RENAME MODAL
-
-function openRenameModal(templateId, templateName) {
-    templateToRename = { template_id: templateId, template_name: templateName };
-    document.getElementById('rename-input').value = templateName;
-    document.getElementById('rename-modal').classList.add('active');
-    hideMessage('rename-feedback');
-    
-    setTimeout(() => {
-        document.getElementById('rename-input').focus();
-        document.getElementById('rename-input').select();
-    }, 100);
-}
-
-function closeRenameModal() {
-    document.getElementById('rename-modal').classList.remove('active');
-    templateToRename = null;
-    hideMessage('rename-feedback');
-}
-
-async function confirmRenameTemplate() {
-    const newName = document.getElementById('rename-input').value.trim();
-    
-    if (!newName) {
-        showMessage('rename-feedback', '⚠️ Please enter a template name', 'error');
-        return;
-    }
-    
-    const button = document.getElementById('confirm-rename-btn');
-    const originalText = button.innerHTML;
-    
-    button.disabled = true;
-    button.innerHTML = '<span class="spinner"></span> Saving...';
-    hideMessage('rename-feedback');
-    
-    try {
-        const response = await fetch('https://n8n.lyroshq.com/webhook/quote-rename-template', {
-	method: 'POST',
-	headers: { 'Content-Type': 'application/json' },
-	body: JSON.stringify({
-	    user_email: authenticatedUserEmail,
-	    template_id: templateToRename.template_id,
-	    new_name: newName
-	})
-        });
-        
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-	showMessage('rename-feedback', '✅ Template renamed successfully', 'success');
-	setTimeout(() => {
-	    closeRenameModal();
-	    loadUserTemplates();
-	}, 1500);
-        } else {
-	showMessage('rename-feedback', `⚠️ ${result.message || 'Failed to rename template'}`, 'error');
-        }
-    } catch (error) {
-        console.error('Rename Error:', error);
-        showMessage('rename-feedback', '⚠️ An error occurred during rename', 'error');
-    } finally {
-        button.disabled = false;
-        button.innerHTML = originalText;
-    }
-}
-
 
 // TEMPLATE REGISTRATION MODAL
 

@@ -739,6 +739,16 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
+
+    .placeholder-field .readonly-field,
+    .placeholder-field .readonly-field.multiline,
+    .placeholder-field .current-text-display {
+        text-align: left !important;
+        vertical-align: top !important;
+        display: block !important;
+        justify-content: flex-start !important;
+        align-items: flex-start !important;
+    }
     
     .placeholder-field.action-field-highlight {
         animation: pulse-highlight 2s ease-in-out 3;
@@ -794,22 +804,26 @@
         max-height: 80px;
         overflow-y: auto;
         line-height: 1.4;
-        text-align: left;
-        display: flex;
-        align-items: flex-start;
+        text-align: left !important;
+        display: block !important;
+        vertical-align: top !important;
         white-space: pre-wrap;
     }
     
     .readonly-field.multiline {
-        white-space: pre-wrap;
-        display: block;
-        text-align: left;
-        padding-top: 8px;
-        padding-left: 10px;
+        white-space: pre-wrap !important;
+        display: block !important;
+        text-align: left !important;
+        vertical-align: top !important;
+        padding: 8px 10px !important;
+        line-height: 1.4 !important;
     }
     
     .current-text-display {
         max-height: 48px;
+        text-align: left !important;
+        display: block !important;
+        vertical-align: top !important;
     }
 
     .preview-field {

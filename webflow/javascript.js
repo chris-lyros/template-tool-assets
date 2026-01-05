@@ -1094,6 +1094,10 @@ function initializeFormEventListeners() {
                 formData.append('template_name', document.querySelector('[name="template_name"]').value);
                 formData.append('industry', document.querySelector('[name="industry"]').value);
                 
+                // ✨ NEW: Check if user wants to skip AI processing
+                const skipAI = document.getElementById('skip-ai-processing').checked;
+                formData.append('skip_ai_processing', skipAI ? 'true' : 'false');
+                
                 const templateFile = document.getElementById('template-file-input').files[0];
                 if (templateFile) {
                     formData.append('template_file', templateFile);

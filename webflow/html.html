@@ -35,33 +35,25 @@
     </div>
 </div>
 
-<!-- RENAME TEMPLATE MODAL -->
-<div id="rename-modal" class="modal-overlay">
-    <div class="modal">
-        <h3>✏️ Rename Template</h3>
-        
-        <div id="rename-feedback" class="feedback-message"></div>
-        
-        <div class="form-group">
-            <label>New Template Name</label>
-            <input type="text" id="rename-input" placeholder="Enter new name">
-        </div>
-        
-        <div class="btn-group">
-            <button class="btn btn-secondary" onclick="closeRenameModal()">Cancel</button>
-            <button class="btn btn-primary" id="confirm-rename-btn" onclick="confirmRenameTemplate()">Save</button>
-        </div>
-    </div>
-</div>
-
 <!-- ==========================================
-     🔧 REFINEMENT MODAL - UPDATED WITH TABS
-     Replace ONLY this modal section in your HTML
+     ✏️ EDIT TEMPLATE MODAL - UPDATED VERSION
      ========================================== -->
 
 <div id="refine-modal" class="modal-overlay">
     <div class="modal modal-large">
-        <h3>🔧 Refine Template: <span id="refine-template-name" style="color: #10b981;"></span></h3>
+        <h3>✏️ Edit Template</h3>
+        
+        <!-- ✨ NEW: Inline Rename Field -->
+        <div class="edit-template-name-section">
+            <label>Template Name</label>
+            <div class="rename-input-wrapper">
+                <input type="text" id="edit-template-name-input" placeholder="Enter template name">
+                <button class="btn-save-rename" onclick="saveTemplateNameChange()" title="Save name change">
+                    💾
+                </button>
+            </div>
+            <div id="rename-inline-feedback" class="feedback-message"></div>
+        </div>
         
         <!-- 🆕 TAB NAVIGATION -->
         <div class="refine-tabs">
@@ -75,61 +67,68 @@
         
         <div id="refine-feedback" class="feedback-message"></div>
         
-        <!-- TAB 1: AI PLACEHOLDERS (EXISTING FUNCTIONALITY) -->
+        <!-- TAB 1: AI PLACEHOLDERS -->
         <div id="ai-placeholders-tab" class="tab-content active">
+            <div class="tab-header-simple">
+                <p>Use the Action dropdown to make changes</p>
+            </div>
             <div id="placeholder-editor-container">
                 <p style="text-align: center; color: #888;">Loading placeholders...</p>
             </div>
         </div>
         
-        <!-- TAB 2: MANUAL PLACEHOLDERS (NEW FUNCTIONALITY) -->
+        <!-- TAB 2: MANUAL PLACEHOLDERS -->
         <div id="manual-placeholders-tab" class="tab-content">
-            <div class="manual-placeholder-header" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-                <p style="margin: 0; color: #ddd; font-size: 12px; line-height: 1.6;">
-                    Found text in your template that the AI missed? Convert it to a placeholder:
-                </p>
-            </div>
             
             <!-- Add New Manual Placeholder Form -->
             <div class="manual-add-form">
-                <div class="form-row">
-                    <div class="form-col">
+                <!-- Full-width Text to Find -->
+                <div class="form-group-manual">
+                    <div class="label-with-tooltip">
                         <label>Text to Find</label>
-                        <div class="autocomplete-wrapper">
-                            <textarea id="manual-search-text" 
-                                      rows="3"
-                                      placeholder="e.g., John Smith Construction Pty Ltd&#10;&#10;Or paste a larger block of text..."
-                                      autocomplete="off"></textarea>
-                            <div id="autocomplete-suggestions" class="autocomplete-suggestions"></div>
-                        </div>
-                        <p class="help-text">Start typing to see suggestions from your template</p>
+                        <span class="tooltip" data-tooltip="Type or paste text from your template that you want to replace">?</span>
                     </div>
-                        <div class="form-col">
-                        <label>Placeholder Name</label>
-                        <input type="text" id="manual-placeholder-name" 
-                               placeholder="e.g., COMPANY_NAME"
-                               style="text-transform: uppercase;"
-                               oninput="updatePlaceholderPreview()">
-                        <div id="placeholder-preview" class="placeholder-preview" style="display: none;">
-                            <span class="preview-label">Will appear as:</span>
-                            <code id="placeholder-preview-text">[YOUR_PLACEHOLDER]</code>
-                        </div>
-                        <p class="help-text">What should this placeholder be called?</p>
+                    <div class="autocomplete-wrapper">
+                        <textarea id="manual-search-text" 
+                                  rows="4"
+                                  placeholder="Start typing to see suggestions from your template..."
+                                  autocomplete="off"></textarea>
+                        <div id="autocomplete-suggestions" class="autocomplete-suggestions"></div>
                     </div>
                 </div>
-                <div class="form-row-actions">
-                    <div class="form-col-small">
-                        <label>Action</label>
+                
+                <!-- Action and Placeholder Name Row -->
+                <div class="form-row-manual">
+                    <div class="form-col-action">
+                        <div class="label-with-tooltip">
+                            <label>Action</label>
+                            <span class="tooltip" data-tooltip="Rename: Replace with [PLACEHOLDER_NAME] | Hardcode: Replace with exact value you type | No Change: Skip this field">?</span>
+                        </div>
                         <select id="manual-action-select">
                             <option value="replace">Replace with Placeholder</option>
                             <option value="hardcode">Replace with Fixed Text</option>
                         </select>
                     </div>
-                    <div class="form-col-button">
-                        <button class="btn btn-primary btn-block" onclick="addManualPlaceholder()">
-                            ✅ Add to List Below
-                        </button>
+                    <div class="form-col-placeholder">
+                        <div class="label-with-tooltip">
+                            <label>Placeholder Name</label>
+                            <span class="tooltip" data-tooltip="For placeholders, use UPPER_CASE names. For hardcode, type the exact replacement text.">?</span>
+                        </div>
+                        <input type="text" id="manual-placeholder-name" 
+                               placeholder="PLACEHOLDER_NAME or Fixed replaceable text"
+                               style="text-transform: uppercase;"
+                               oninput="updatePlaceholderPreview()">
                     </div>
+                </div>
+                
+                <!-- Buttons Row -->
+                <div class="form-buttons-row">
+                    <button class="btn btn-secondary btn-reset" onclick="resetManualForm()">
+                        🔄 Reset
+                    </button>
+                    <button class="btn btn-primary btn-add" onclick="addManualPlaceholder()">
+                        ✅ Add to List Below
+                    </button>
                 </div>
             </div>
             
@@ -143,7 +142,8 @@
                 </div>
             </div>
         </div>        
-        <!-- SAVE BUTTONS (UPDATED) -->
+        
+        <!-- SAVE BUTTONS -->
         <div class="btn-group">
             <button class="btn btn-secondary" onclick="closeRefineModal()">Cancel</button>
             <button class="btn btn-primary" id="save-all-refinements-btn" onclick="saveAllRefinements()">

@@ -1,0 +1,315 @@
+<!-- LOADING STATE -->
+<div id="loading-message">
+    <div style="text-align: center; padding: 80px 20px;">
+        <div class="spinner" style="width: 40px; height: 40px; border-width: 3px;"></div>
+        <p style="font-size: 16px; color: #888; margin-top: 16px;">Verifying access...</p>
+    </div>
+</div>
+
+<!-- ACCESS DENIED STATE -->
+<div id="access-denied-message" style="display: none;">
+    <div style="max-width: 400px; margin: 100px auto; padding: 40px 20px; text-align: center;">
+        <h2 style="color: #ef4444;">Access Denied</h2>
+        <p style="color: #888;">Your session has expired or is invalid.</p>
+        <p style="margin-top: 20px;">
+            <a href="https://www.lyros.com.au/quote-login" style="color: #10b981; text-decoration: none;">← Return to Login</a>
+        </p>
+    </div>
+</div>
+
+<!-- DELETE CONFIRMATION MODAL -->
+<div id="delete-modal" class="modal-overlay">
+    <div class="modal">
+        <h3>⚠️ Delete Template</h3>
+        <p>Are you sure you want to delete this template? This action cannot be undone.</p>
+        <p style="font-weight: 600; color: #fff; margin-bottom: 8px;">Template: <span id="delete-template-name"></span></p>
+        <p style="font-size: 12px; color: #888; margin-bottom: 16px;">To confirm, type <strong>DELETE</strong> below:</p>
+        
+        <input type="text" id="delete-confirmation-input" placeholder="Type DELETE" 
+               style="width: 100%; padding: 12px; background: #0f0f0f; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 16px;">
+        
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-danger" id="confirm-delete-btn" onclick="confirmDeleteTemplate()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- RENAME TEMPLATE MODAL -->
+<div id="rename-modal" class="modal-overlay">
+    <div class="modal">
+        <h3>✏️ Rename Template</h3>
+        
+        <div id="rename-feedback" class="feedback-message"></div>
+        
+        <div class="form-group">
+            <label>New Template Name</label>
+            <input type="text" id="rename-input" placeholder="Enter new name">
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="closeRenameModal()">Cancel</button>
+            <button class="btn btn-primary" id="confirm-rename-btn" onclick="confirmRenameTemplate()">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+     🔧 REFINEMENT MODAL - UPDATED WITH TABS
+     Replace ONLY this modal section in your HTML
+     ========================================== -->
+
+<div id="refine-modal" class="modal-overlay">
+    <div class="modal modal-large">
+        <h3>🔧 Refine Template: <span id="refine-template-name" style="color: #10b981;"></span></h3>
+        
+        <!-- 🆕 TAB NAVIGATION -->
+        <div class="refine-tabs">
+            <button class="refine-tab active" onclick="switchRefineTab('ai-placeholders')" data-tab="ai-placeholders">
+                🤖 AI Detected (<span id="ai-count">0</span>)
+            </button>
+            <button class="refine-tab" onclick="switchRefineTab('manual-placeholders')" data-tab="manual-placeholders">
+                📝 Add Manual (<span id="manual-count">0</span>)
+            </button>
+        </div>
+        
+        <div id="refine-feedback" class="feedback-message"></div>
+        
+        <!-- TAB 1: AI PLACEHOLDERS (EXISTING FUNCTIONALITY) -->
+        <div id="ai-placeholders-tab" class="tab-content active">
+            <div id="placeholder-editor-container">
+                <p style="text-align: center; color: #888;">Loading placeholders...</p>
+            </div>
+        </div>
+        
+        <!-- TAB 2: MANUAL PLACEHOLDERS (NEW FUNCTIONALITY) -->
+        <div id="manual-placeholders-tab" class="tab-content">
+            <div class="manual-placeholder-header" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                <p style="margin: 0; color: #ddd; font-size: 12px; line-height: 1.6;">
+                    Found text in your template that the AI missed? Convert it to a placeholder:
+                </p>
+            </div>
+            
+            <!-- Add New Manual Placeholder Form -->
+            <div class="manual-add-form">
+                <div class="form-row">
+                    <div class="form-col">
+                        <label>Text to Find</label>
+                        <div class="autocomplete-wrapper">
+                            <textarea id="manual-search-text" 
+                                      rows="3"
+                                      placeholder="e.g., John Smith Construction Pty Ltd&#10;&#10;Or paste a larger block of text..."
+                                      autocomplete="off"></textarea>
+                            <div id="autocomplete-suggestions" class="autocomplete-suggestions"></div>
+                        </div>
+                        <p class="help-text">Start typing to see suggestions from your template</p>
+                    </div>
+                        <div class="form-col">
+                        <label>Placeholder Name</label>
+                        <input type="text" id="manual-placeholder-name" 
+                               placeholder="e.g., COMPANY_NAME"
+                               style="text-transform: uppercase;"
+                               oninput="updatePlaceholderPreview()">
+                        <div id="placeholder-preview" class="placeholder-preview" style="display: none;">
+                            <span class="preview-label">Will appear as:</span>
+                            <code id="placeholder-preview-text">[YOUR_PLACEHOLDER]</code>
+                        </div>
+                        <p class="help-text">What should this placeholder be called?</p>
+                    </div>
+                </div>
+                <div class="form-row-actions">
+                    <div class="form-col-small">
+                        <label>Action</label>
+                        <select id="manual-action-select">
+                            <option value="replace">Replace with Placeholder</option>
+                            <option value="hardcode">Replace with Fixed Text</option>
+                        </select>
+                    </div>
+                    <div class="form-col-button">
+                        <button class="btn btn-primary btn-block" onclick="addManualPlaceholder()">
+                            ✅ Add to List Below
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- List of Manual Placeholders to Add -->
+            <div class="manual-placeholder-list">
+                <h4>Manual Placeholders to Add (<span id="manual-list-count">0</span>)</h4>
+                <div id="manual-placeholder-items">
+                    <div class="empty-state-small">
+                        <p>No manual placeholders added yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        <!-- SAVE BUTTONS (UPDATED) -->
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="closeRefineModal()">Cancel</button>
+            <button class="btn btn-primary" id="save-all-refinements-btn" onclick="saveAllRefinements()">
+                💾 Save All Changes
+            </button>
+	</div>
+    </div>
+</div>
+
+<!-- AUTHENTICATED CONTENT -->
+<div id="quote-tool-content" style="display: none;">
+    <div id="quote-wrapper">
+        <div class="quote-container">
+            
+            <!-- STICKY HEADER -->
+            <div class="quote-header">
+                <h1>Quote <span>Automation</span> Tool</h1>
+                <div class="status-bar">
+                    <span class="badge">Beta</span>
+                    <div class="user-info-container">
+                        <span class="user-info" id="user-email-display">Loading...</span>
+                        <button class="logout-btn" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ACCORDION SECTION 1: GENERATE NEW QUOTE -->
+            <div class="accordion-section">
+                <div class="accordion-header active" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <span class="accordion-icon">▸</span>
+                        <span>Generate New Quote</span>
+                    </div>
+                    <span class="accordion-chevron">▼</span>
+                </div>
+                <div class="accordion-content active">
+                    <div class="accordion-body">
+                        <div id="generate-feedback" class="feedback-message"></div>
+                        
+                        <form id="generate-quote-form">
+                            <div class="form-group">
+                                <label>Select Registered Template <span class="required">*</span></label>
+                                <select name="template_id" id="template-selector" required>
+                                    <option value="">Choose a template...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="label-with-tooltip">
+                                    <label>Upload Information for Quote Generation</label>
+                                    <span class="tooltip" data-tooltip="Upload RFT, scope docs, or tender documents">?</span>
+                                </div>
+                                <div class="upload-zone" id="quote-upload-zone">
+                                    <div class="icon">📄</div>
+                                    <p style="font-weight: 600; margin-bottom: 4px;">Click to upload or drag and drop</p>
+                                    <p>PDF, DOCX, TXT up to 10MB</p>
+                                    <input type="file" id="quote-file-input" multiple accept=".pdf,.docx,.txt">
+                                </div>
+                                <div id="quote-file-list" class="file-list"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Add Voice Instructions (Optional)</label>
+                                <button type="button" class="btn btn-secondary btn-block" id="voice-record-btn">
+                                    🎤 Record Voice Note
+                                </button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Add Text Instructions (Optional)</label>
+                                <textarea name="text_instructions" id="text-instructions" placeholder="Type project details, special requirements, or additional context..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-block" id="generate-quote-btn">
+                                Generate Quote
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ACCORDION SECTION 2: MY TEMPLATES -->
+            <div class="accordion-section">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <span class="accordion-icon">▸</span>
+                        <span>My Templates</span>
+                    </div>
+                    <span class="accordion-chevron">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <button class="btn btn-primary btn-block" onclick="showRegisterForm()" style="margin-bottom: 16px;">
+                            + Register New Template
+                        </button>
+                        
+                        <div id="template-list"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ACCORDION SECTION 3: QUOTE HISTORY -->
+            <div class="accordion-section">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <span class="accordion-icon">▸</span>
+                        <span>Quote History</span>
+                    </div>
+                    <span class="accordion-chevron">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <div id="quote-history-list">
+                            <div class="empty-state">
+                                <p>No quotes generated yet</p>
+                                <p style="font-size: 11px;">Generate your first quote above</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TEMPLATE REGISTRATION MODAL -->
+            <div id="register-template-overlay" class="modal-overlay">
+                <div class="modal" style="max-width: 500px;">
+                    <h3>📄 Register New Template</h3>
+                    
+                    <div id="register-feedback" class="feedback-message"></div>
+                    
+                    <form id="template-registration-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label>Template Name <span class="required">*</span></label>
+                            <input type="text" name="template_name" placeholder="e.g., Standard Quote" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Industry <span class="required">*</span></label>
+                            <select name="industry" id="industry-selector" required>
+                                <option value="">Select your industry...</option>
+                                <option value="builder">Builder</option>
+                                <option value="electrician">Electrician</option>
+                                <option value="manufacturer">Manufacturer</option>
+                                <option value="auditor">Auditor</option>
+                                <option value="accountant">Accountant</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Register Quote Template <span class="required">*</span></label>
+                            <div class="upload-zone" id="template-upload-zone">
+                                <div class="icon">📄</div>
+                                <p style="font-weight: 600; margin-bottom: 4px;">Click to upload or drag and drop</p>
+                                <p>DOCX only, up to 10MB</p>
+                                <input type="file" name="template_file" id="template-file-input" accept=".docx" required>
+                            </div>
+                            <div id="template-file-preview" class="file-list"></div>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary" onclick="hideRegisterForm()">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="register-template-btn">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>

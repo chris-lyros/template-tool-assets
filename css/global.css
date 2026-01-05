@@ -794,8 +794,10 @@
         max-height: 80px;
         overflow-y: auto;
         line-height: 1.4;
-        text-align: left
-        vertical-align: top;
+        text-align: left;
+        display: flex;
+        align-items: flex-start;
+        white-space: pre-wrap;
     }
     
     .readonly-field.multiline {

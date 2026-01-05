@@ -890,6 +890,26 @@
     line-height: 1.4 !important;
 }
 
+.readonly-field.current-text-display {
+    background: rgba(16, 185, 129, 0.1) !important;
+    border: 1px solid #10b981 !important;
+    color: #10b981 !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    font-family: 'Courier New', monospace;
+    padding: 10px 12px !important;
+    line-height: 1.5 !important;
+    max-height: 60px !important;
+    overflow-y: auto !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+}
+
+.readonly-field.multiline:not(.current-text-display) {
+    color: #888 !important;
+    font-size: 12px !important;
+}
+
 .current-text-display {
     max-height: 48px;
     text-align: left !important;

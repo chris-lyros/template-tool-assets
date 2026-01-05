@@ -256,29 +256,39 @@
 .tooltip:hover::after {
     content: attr(data-tooltip);
     position: absolute;
-    top: -40px;
+    bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
     background: var(--bg-tertiary);
     color: var(--text-secondary);
-    padding: 8px 12px;
+    padding: 10px 14px;
     border-radius: 6px;
     font-size: 11px;
-    white-space: nowrap;
+    line-height: 1.5;
+    white-space: normal;
+    max-width: 250px;
+    width: max-content;
     z-index: 1000;
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    margin-bottom: 8px;
 }
 
 .tooltip:hover::before {
     content: '';
     position: absolute;
-    top: -8px;
+    bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    border: 4px solid transparent;
+    border: 6px solid transparent;
     border-top-color: var(--border-color);
     z-index: 1000;
+    margin-bottom: 2px;
+}
+
+.tooltip-multiline:hover::after {
+    white-space: pre-line;
+    text-align: left;
 }
 
 .required { color: var(--error-color); }
@@ -726,22 +736,6 @@
     display: block;
 }
 
-.tab-header-simple {
-    background: rgba(16, 185, 129, 0.05);
-    border: 1px solid rgba(16, 185, 129, 0.2);
-    border-radius: 8px;
-    padding: 10px 12px;
-    margin-bottom: 16px;
-    text-align: center;
-}
-
-.tab-header-simple p {
-    margin: 0;
-    color: #ddd;
-    font-size: 12px;
-    font-weight: 600;
-}
-
 /* ==========================================
    PLACEHOLDER EDITOR STYLES
    ========================================== */
@@ -798,8 +792,8 @@
 
 @media (min-width: 600px) {
     .placeholder-row {
-        grid-template-columns: 1fr 1.5fr 2fr 1.5fr;
-        /* ✅ REORDERED: Action → Placeholder Name → Current Text → Preview Result */
+        grid-template-columns: 2fr 1fr 1.5fr 1.5fr;
+        /* ✅ REORDERED: Current Text → Action → Placeholder Name → Preview Result */
     }
 }
 
@@ -940,9 +934,27 @@
     margin-bottom: 8px;
 }
 
+.form-group-manual textarea {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.2s;
+}
+
+.form-group-manual textarea:focus {
+    border-color: var(--accent-primary);
+    outline: none;
+}
+
 .form-row-manual {
     display: grid;
-    grid-template-columns: 180px 1fr;
+    grid-template-columns: 216px 1fr;
     gap: 12px;
     margin-bottom: 16px;
 }
@@ -986,60 +998,18 @@
 
 .form-buttons-row {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     justify-content: flex-end;
 }
 
-.btn-reset {
-    padding: 10px 20px;
-    min-width: 100px;
+.btn-reset-manual {
+    flex: 1;
+    min-height: 44px;
 }
 
-.btn-add {
-    padding: 10px 24px;
-    min-width: 160px;
-}
-
-.form-col label {
-    display: block;
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-}
-
-.form-col input {
-    width: 100%;
-    padding: 8px 10px;
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    color: var(--text-secondary);
-    font-size: 12px;
-}
-
-.form-col input:focus {
-    border-color: var(--accent-primary);
-    outline: none;
-}
-
-.form-col textarea {
-    width: 100%;
-    padding: 8px 10px;
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    color: var(--text-secondary);
-    font-size: 12px;
-    font-family: inherit;
-    resize: vertical;
-    min-height: 60px;
-}
-
-.form-col textarea:focus {
-    border-color: var(--accent-primary);
-    outline: none;
+.btn-add-manual {
+    flex: 1;
+    min-height: 44px;
 }
 
 .help-text {

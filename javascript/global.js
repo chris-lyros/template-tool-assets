@@ -1,5 +1,3 @@
-<script>
-
 // GLOBAL STATE
 
 let authenticatedUserEmail = '';
@@ -1283,4 +1281,3 @@ function sendSupportTicket() {
     const body = `Template Loading Error\n\nUser Email: ${authenticatedUserEmail}\nTimestamp: ${new Date().toISOString()}`;
     window.location.href = `mailto:support@lyros.com.au?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
-</script>

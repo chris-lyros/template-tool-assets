@@ -151,14 +151,13 @@ async function loadUserTemplates() {
 	} else {
 	    templateList.innerHTML = userTemplates.map(t => `
 	        <div class="template-item">
-		<button class="btn btn-edit btn-edit-left" onclick="openRenameModal('${t.template_id}', '${escapeHtml(t.template_name)}')">✏️ Rename</button>
 		<div class="template-info">
 		    <h4>${t.template_name}</h4>
 		    <p>Uploaded: ${formatDate(t.created_at || 'Unknown')}</p>
 		</div>
 		<div class="template-actions">
 		    <a href="${t.google_drive_view_url || t.preview_url}" target="_blank" class="btn btn-secondary btn-view">View</a>
-		    <button class="btn btn-edit btn-refine" onclick="openRefineModal('${t.template_id}', '${escapeHtml(t.template_name)}')">🔧 Refine</button>
+		    <button class="btn btn-edit btn-refine" onclick="openRefineModal('${t.template_id}', '${escapeHtml(t.template_name)}')">✏️ Edit</button>
 		    <button class="btn btn-danger btn-delete" onclick="openDeleteModal('${t.template_id}', '${escapeHtml(t.template_name)}')">×</button>
 		</div>
 	        </div>
@@ -304,10 +303,10 @@ function createPlaceholderRow(ph, index) {
     // Dynamic text-transform based on action
     const textTransform = action === 'hardcode' ? 'none' : 'uppercase';
     
-return `
+    return `
 <div class="placeholder-row ${isNoChange ? 'row-disabled' : ''}" data-index="${index}">
 	
-	<!-- ✅ COLUMN 1: ACTION (moved to first position) -->
+	<!-- ✅ COLUMN 1: ACTION -->
 	<div class="placeholder-field action-field-highlight">
 	    <div class="label-with-tooltip">
 	        <label>Action</label>
@@ -331,45 +330,28 @@ return `
 	           style="text-transform: ${textTransform};" />
 	</div>
 	
-	<!-- ✅ COLUMN 3: CURRENT TEXT (moved to third position) -->
+	<!-- ✅ COLUMN 3: CURRENT TEXT -->
 	<div class="placeholder-field">
 	    ${showCurrentColumn ? `
 	        <label>Current Text ⚡</label>
-	        <div class="readonly-field multiline current-text-display" style="background: rgba(16, 185, 129, 0.1); border-color: #10b981; text-align: left !important; vertical-align: top !important; display: block !important; padding-top: 8px !important;">
+	        <div class="readonly-field multiline current-text-display" style="background: rgba(16, 185, 129, 0.1); border-color: #10b981;">
 		${escapeHtml(currentText)}
 	        </div>
 	        <label style="margin-top: 12px;">Original Text (for reference)</label>
 	    ` : '<label>Original Text</label>'}
-	    <div class="readonly-field multiline" style="text-align: left !important; vertical-align: top !important; display: block !important; padding-top: 8px !important;">
+	    <div class="readonly-field multiline">
 	        ${escapeHtml(originalText)}
 	    </div>
-	</div>	
-	<div class="placeholder-field">
-	    <label>Placeholder Name</label>
-	    <input type="text" 
-	           id="ph-name-${index}" 
-	           value="${escapeHtml(ph.name || '')}" 
-	           placeholder="e.g., CLIENT_NAME"
-	           ${isNoChange ? 'disabled' : ''}
-	           style="text-transform: ${textTransform};" />
 	</div>
 	
-	<div class="placeholder-field action-field-highlight">
-	    <label>Action ⬇️</label>
-	    <select id="ph-action-${index}">
-	        <option value="no_change" ${action === 'no_change' ? 'selected' : ''}>⚫ No Change</option>
-	        <option value="rename" ${action === 'rename' ? 'selected' : ''}>🔧 Rename</option>
-	        <option value="hardcode" ${action === 'hardcode' ? 'selected' : ''}>📌 Hardcode</option>
-	    </select>
-	</div>
-	
+	<!-- ✅ COLUMN 4: PREVIEW RESULT -->
 	<div class="placeholder-field">
 	    <label>Preview Result</label>
 	    <div class="preview-field" id="ph-preview-${index}">
 	        ${generatePreview(currentText, ph.name, action)}
 	    </div>
 	</div>
-        </div>
+</div>
     `;
 }
 

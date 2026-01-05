@@ -906,11 +906,15 @@
 }
 
 .readonly-field.multiline:not(.current-text-display) {
-    color: #888 !important;
+    color: #999 !important;
     font-size: 12px !important;
 }
 
 .current-text-display {
+    color: #10b981 !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    background: rgba(16, 185, 129, 0.15) !important;
     max-height: 48px;
     text-align: left !important;
     display: block !important;

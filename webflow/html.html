@@ -1,248 +1,327 @@
-<!-- Top Banner -->
-<div class="top-banner">
-    <div class="logo">
-        <div class="logo-icon">🤖</div>
-        <span>Raff</span>
-    </div>
-    <div class="banner-buttons">
-        <button class="banner-btn" onclick="togglePanel('about')"><span>ℹ️</span> About</button>
-        <button class="banner-btn" onclick="togglePanel('spend')"><span>💰</span> Spend</button>
-        <button class="banner-btn" onclick="togglePanel('mems')"><span>🧠</span> Mems</button>
+<!-- LOADING STATE -->
+<div id="loading-message">
+    <div style="text-align: center; padding: 80px 20px;">
+        <div class="spinner" style="width: 40px; height: 40px; border-width: 3px;"></div>
+        <p style="font-size: 16px; color: #888; margin-top: 16px;">Verifying access...</p>
     </div>
 </div>
 
-<!-- Main Container -->
-<div class="main-container">
-    <!-- Chat Area -->
-    <div class="chat-area" id="chatArea">
-        <div class="chat-content">
-            <!-- Welcome Section -->
-            <div class="welcome-section" id="welcomeSection">
-                <h1>Welcome to Raff</h1>
-                <p>Your intelligent AI assistant with privacy and control</p>
-            </div>
+<!-- ACCESS DENIED STATE -->
+<div id="access-denied-message" style="display: none;">
+    <div style="max-width: 400px; margin: 100px auto; padding: 40px 20px; text-align: center;">
+        <h2 style="color: #ef4444;">Access Denied</h2>
+        <p style="color: #888;">Your session has expired or is invalid.</p>
+        <p style="margin-top: 20px;">
+            <a href="https://www.lyros.com.au/quote-login" style="color: #10b981; text-decoration: none;">← Return to Login</a>
+        </p>
+    </div>
+</div>
 
-            <!-- Messages (hidden initially) -->
-            <div class="messages" id="messages" style="display: none;"></div>
-
-            <!-- Model Controls -->
-            <div class="model-controls">
-                <div class="control-group">
-                    <label>Model</label>
-                    <select id="modelSelect" onchange="updateModelInfo()">
-                        <option value="claude-opus-4" data-cost="15.00" data-strength="Deep reasoning" data-supplier="anthropic">Claude Opus 4 - $15.00 / 1M</option>
-                        <option value="grok-2" data-cost="10.00" data-strength="Real-time insights" data-supplier="xai">Grok-2 - $10.00 / 1M</option>
-                        <option value="gpt-4o" data-cost="5.00" data-strength="Vision & reasoning" data-supplier="openai">GPT-4o - $5.00 / 1M</option>
-                        <option value="grok-beta" data-cost="5.00" data-strength="Experimental features" data-supplier="xai">Grok Beta - $5.00 / 1M</option>
-                        <option value="claude-sonnet-4.5" data-cost="3.00" data-strength="Coding & reasoning" data-supplier="anthropic">Claude Sonnet 4.5 - $3.00 / 1M</option>
-                        <option value="claude-sonnet-3.5" data-cost="3.00" data-strength="Writing & analysis" data-supplier="anthropic">Claude Sonnet 3.5 - $3.00 / 1M</option>
-                        <option value="gpt-4-turbo" data-cost="3.00" data-strength="Complex tasks" data-supplier="openai">GPT-4 Turbo - $3.00 / 1M</option>
-                        <option value="gemini-1.5-pro" data-cost="2.50" data-strength="Multimodal tasks" data-supplier="gemini">Gemini 1.5 Pro - $2.50 / 1M</option>
-                        <option value="grok-2-mini" data-cost="2.00" data-strength="Real-time data" data-supplier="xai">Grok-2 Mini - $2.00 / 1M</option>
-                        <option value="llama-3.1-405b" data-cost="0.80" data-strength="Advanced reasoning" data-supplier="meta">Llama 3.1 405B - $0.80 / 1M</option>
-                        <option value="claude-haiku-4" data-cost="0.80" data-strength="Speed & cost" data-supplier="anthropic">Claude Haiku 4 - $0.80 / 1M</option>
-                        <option value="gpt-4o-mini" data-cost="0.60" data-strength="Balanced performance" data-supplier="openai" selected>GPT-4o Mini - $0.60 / 1M</option>
-                        <option value="llama-3.3-70b" data-cost="0.35" data-strength="Open-source power" data-supplier="meta">Llama 3.3 70B - $0.35 / 1M</option>
-                        <option value="mistral-large" data-cost="0.30" data-strength="Reasoning & code" data-supplier="mistral">Mistral Large - $0.30 / 1M</option>
-                        <option value="mixtral-8x7b" data-cost="0.24" data-strength="General tasks" data-supplier="mistral">Mixtral 8x7B - $0.24 / 1M</option>
-                        <option value="gemini-1.5-flash" data-cost="0.15" data-strength="Fast responses" data-supplier="gemini">Gemini 1.5 Flash - $0.15 / 1M</option>
-                        <option value="gemini-2.0-flash" data-cost="0.10" data-strength="Speed & efficiency" data-supplier="gemini">Gemini 2.0 Flash - $0.10 / 1M</option>
-                    </select>
-                    <div class="model-strength" id="modelStrength">Best for: Balanced performance</div>
-                </div>
-
-                <div class="control-group">
-                    <label>Options</label>
-                    <div class="checkbox-group">
-                        <div class="checkbox-item" title="Extended reasoning process - the model thinks through complex problems step-by-step before responding. Increases token usage but improves accuracy for difficult tasks.">
-                            <input type="checkbox" id="thinkingEnabled" onchange="updateModelInfo()">
-                            <label for="thinkingEnabled">🤔 Hmm</label>
-                        </div>
-                        <div class="checkbox-item" title="Real-time web search - the model searches the internet for current information and recent events. Adds context tokens but provides up-to-date answers.">
-                            <input type="checkbox" id="webSearchEnabled" onchange="updateModelInfo()">
-                            <label for="webSearchEnabled">🌐 Web</label>
-                        </div>
-                        <div class="checkbox-item" title="Ignore your stored memory - the model responds without referencing your saved preferences, background, or past conversations. Useful for fresh perspectives.">
-                            <input type="checkbox" id="ignoreMemory">
-                            <label for="ignoreMemory">🚫 Mems</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label>Creativity</label>
-                    <div class="creative-slider">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="font-size: 0.75rem; color: var(--text-secondary);">Less Creative</span>
-                            <span style="font-size: 0.75rem; color: var(--text-secondary);">More Creative</span>
-                        </div>
-                        <div class="slider-container">
-                            <input type="range" min="1" max="10" value="5" step="0.1" id="creativitySlider" oninput="updateCreativityLabel()">
-                            <span class="slider-label" id="creativityLabel">Default (Balanced)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label>Formality</label>
-                    <div class="creative-slider">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="font-size: 0.75rem; color: var(--text-secondary);">Less Formal</span>
-                            <span style="font-size: 0.75rem; color: var(--text-secondary);">More Formal</span>
-                        </div>
-                        <div class="slider-container">
-                            <input type="range" min="1" max="10" value="5" step="0.1" id="formalitySlider" oninput="updateFormalityLabel()">
-                            <span class="slider-label" id="formalityLabel">Normal Human</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Input Area -->
-            <div class="input-area">
-                <input type="text" id="messageInput" placeholder="Send a message..." onkeypress="handleKeyPress(event)">
-                <button class="send-btn" onclick="sendMessage()">Send</button>
-            </div>
-            <div id="budgetWarning" style="text-align: center; margin-top: 0.5rem; font-size: 0.813rem; color: #f87171; display: none;">
-                ⚠️ Tracking to exceed budget - open Spend tab to update budget
-            </div>
+<!-- DELETE CONFIRMATION MODAL -->
+<div id="delete-modal" class="modal-overlay">
+    <div class="modal">
+        <h3>⚠️ Delete Template</h3>
+        <p>Are you sure you want to delete this template? This action cannot be undone.</p>
+        <p style="font-weight: 600; color: #fff; margin-bottom: 8px;">Template: <span id="delete-template-name"></span></p>
+        <p style="font-size: 12px; color: #888; margin-bottom: 16px;">To confirm, type <strong>DELETE</strong> below:</p>
+        
+        <input type="text" id="delete-confirmation-input" placeholder="Type DELETE" 
+               style="width: 100%; padding: 12px; background: #0f0f0f; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 16px;">
+        
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-danger" id="confirm-delete-btn" onclick="confirmDeleteTemplate()">Delete</button>
         </div>
     </div>
+</div>
 
-    <!-- About Panel -->
-    <div class="side-panel" id="aboutPanel">
-        <div class="panel-header">
-            <h2>ℹ️ Why Raff?</h2>
-            <button class="close-panel" onclick="closePanel('about')">×</button>
+<!-- ==========================================
+     ✏️ EDIT TEMPLATE MODAL - FINAL VERSION
+     ========================================== -->
+
+<div id="refine-modal" class="modal-overlay">
+    <div class="modal modal-large">
+        
+        <!-- ✨ Inline Rename Field (NO HEADER) -->
+        <div class="edit-template-name-section">
+            <label>Template Name</label>
+            <div class="rename-input-wrapper">
+                <input type="text" id="edit-template-name-input" placeholder="Enter template name">
+                <button class="btn-save-rename" onclick="saveTemplateNameChange()" title="Save name change">
+                    💾
+                </button>
+            </div>
+            <div id="rename-inline-feedback" class="feedback-message"></div>
         </div>
-        <div class="panel-content">
-            <div class="panel-info" style="padding: 1.5rem;">
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-color); margin-bottom: 0.5rem; font-size: 1rem;">Full Cost Control</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6;">Choose from 20+ models. Pay only for what you use. Real-time budget tracking and model switching.</p>
-                </div>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-color); margin-bottom: 0.5rem; font-size: 1rem;">Privacy First</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6;">Your chats stay in our database. Never used for training. PII automatically redacted before sending to LLMs.</p>
-                </div>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-color); margin-bottom: 0.5rem; font-size: 1rem;">No Bias Creep</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6;">Memory stored separately from chat history. Get accurate, unbiased responses every time.</p>
-                </div>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-color); margin-bottom: 0.5rem; font-size: 1rem;">Enterprise Ready</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6;">PII redaction protects sensitive business information. Safe for corporate use.</p>
-                </div>
-
-                <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1.5rem;">
-                    <h3 style="color: var(--accent-color); margin-bottom: 1rem; font-size: 1rem;">Privacy Settings</h3>
-                    <div class="checkbox-item" style="justify-content: flex-start;">
-                        <input type="checkbox" id="piiRedactionEnabled" checked onchange="handlePIIToggle(this)">
-                        <label for="piiRedactionEnabled" style="font-size: 0.875rem;">Enable PII Redaction (Recommended)</label>
-                    </div>
-                    <p style="color: var(--text-secondary); font-size: 0.75rem; line-height: 1.5; margin-top: 0.75rem;">
-                        When enabled, names, emails, phone numbers, and sensitive business data are automatically redacted before sending to LLMs.
-                    </p>
-                </div>
+        
+        <!-- 🆕 TAB NAVIGATION -->
+        <div class="refine-tabs">
+            <button class="refine-tab active" onclick="switchRefineTab('ai-placeholders')" data-tab="ai-placeholders">
+                🤖 AI Detected (<span id="ai-count">0</span>)
+            </button>
+            <button class="refine-tab" onclick="switchRefineTab('manual-placeholders')" data-tab="manual-placeholders">
+                📝 Add Manual (<span id="manual-count">0</span>)
+            </button>
+        </div>
+        
+        <div id="refine-feedback" class="feedback-message"></div>
+        
+        <!-- TAB 1: AI PLACEHOLDERS (NO GREEN BOX) -->
+        <div id="ai-placeholders-tab" class="tab-content active">
+            <div id="placeholder-editor-container">
+                <p style="text-align: center; color: #888;">Loading placeholders...</p>
             </div>
         </div>
+        
+        <!-- TAB 2: MANUAL PLACEHOLDERS -->
+        <div id="manual-placeholders-tab" class="tab-content">
+            
+            <!-- Add New Manual Placeholder Form -->
+            <div class="manual-add-form">
+                <!-- Full-width Text to Find -->
+                <div class="form-group-manual">
+                    <div class="label-with-tooltip">
+                        <label>Text to Find</label>
+                        <span class="tooltip tooltip-multiline" data-tooltip="Type or paste text from your template that you want to replace">?</span>
+                    </div>
+                    <div class="autocomplete-wrapper">
+                        <textarea id="manual-search-text" 
+                                  rows="4"
+                                  placeholder="Start typing to see suggestions from your template..."
+                                  autocomplete="off"></textarea>
+                        <div id="autocomplete-suggestions" class="autocomplete-suggestions"></div>
+                    </div>
+                </div>
+                
+                <!-- Action and Placeholder Name Row -->
+                <div class="form-row-manual">
+                    <div class="form-col-action">
+                        <div class="label-with-tooltip">
+                            <label>Action</label>
+                            <span class="tooltip tooltip-multiline" data-tooltip="Rename: Replace with [PLACEHOLDER_NAME] | Hardcode: Replace with exact value you type | No Change: Skip this field">?</span>
+                        </div>
+                        <select id="manual-action-select">
+                            <option value="replace">Replace with Placeholder</option>
+                            <option value="hardcode">Replace with Fixed Text</option>
+                        </select>
+                    </div>
+                    <div class="form-col-placeholder">
+                        <div class="label-with-tooltip">
+                            <label>Placeholder Name</label>
+                            <span class="tooltip tooltip-multiline" data-tooltip="For placeholders, use UPPER_CASE names. For hardcode, type the exact replacement text.">?</span>
+                        </div>
+                        <input type="text" id="manual-placeholder-name" 
+                               placeholder="PLACEHOLDER_NAME or Fixed replaceable text"
+                               style="text-transform: uppercase;"
+                               oninput="updatePlaceholderPreview()">
+                    </div>
+                </div>
+                
+                <!-- Buttons Row -->
+                <div class="form-buttons-row">
+                    <button class="btn btn-secondary btn-reset-manual" onclick="resetManualForm()">
+                        🔄 Reset
+                    </button>
+                    <button class="btn btn-primary btn-add-manual" onclick="addManualPlaceholder()">
+                        ✅ Add to List Below
+                    </button>
+                </div>
+            </div>
+            
+            <!-- List of Manual Placeholders to Add -->
+            <div class="manual-placeholder-list">
+                <h4>Manual Placeholders to Add (<span id="manual-list-count">0</span>)</h4>
+                <div id="manual-placeholder-items">
+                    <div class="empty-state-small">
+                        <p>No manual placeholders added yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        
+        <!-- SAVE BUTTONS -->
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="closeRefineModal()">Cancel</button>
+            <button class="btn btn-primary" id="save-all-refinements-btn" onclick="saveAllRefinements()">
+                💾 Save All Changes
+            </button>
+	</div>
     </div>
+</div>
 
-    <!-- Spend Panel -->
-    <div class="side-panel" id="spendPanel">
-        <div class="panel-header">
-            <h2>💰 Spending</h2>
-            <button class="close-panel" onclick="closePanel('spend')">×</button>
-        </div>
-        <div class="panel-content">
-            <div style="padding: 0.5rem;">
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Current Cycle (2 days)</h3>
-                    <div style="font-size: 2rem; font-weight: 600; color: var(--accent-color); margin-bottom: 0.25rem;">$8.47</div>
-                    <div style="font-size: 0.75rem; color: var(--text-secondary);">28 days total in billing cycle</div>
-                </div>
-
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Projected Month-End</h3>
-                    <div id="projectedAmount" style="font-size: 2rem; font-weight: 600; color: #f87171; margin-bottom: 0.25rem;">$118.58</div>
-                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Based on current usage rate</div>
-                    <div id="budgetWarningSpend" style="color: #fca5a5; font-size: 0.875rem; line-height: 1.5;">
-                        ⚠️ On track to exceed budget by $98.59.<br>
-                        <button onclick="switchToRecommendedModel()" style="background: none; border: none; color: var(--accent-color); text-decoration: underline; cursor: pointer; padding: 0; margin-top: 0.5rem; font-size: 0.875rem;">Consider switching to <span id="recommendedModel">GPT-4o Mini</span></button>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Monthly Budget Target</h3>
-                    <div style="font-size: 2rem; font-weight: 600; color: var(--accent-color); margin-bottom: 0.5rem;">$19.99</div>
-                    <input type="number" id="budgetInput" style="width: 100%; padding: 0.5rem; background: var(--primary-bg); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.875rem;" 
-                           value="19.99" onchange="updateBudget(this.value)">
-                </div>
-
-                <div>
-                    <h3 style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">This Session</h3>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="color: var(--text-secondary); font-size: 0.875rem;">Input tokens:</span>
-                        <span style="color: var(--text-primary); font-size: 0.875rem;">1,240 ($0.001)</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="color: var(--text-secondary); font-size: 0.875rem;">Output tokens:</span>
-                        <span style="color: var(--text-primary); font-size: 0.875rem;">890 ($0.001)</span>
-                    </div>
-                    <div style="border-top: 1px solid var(--border-color); margin-top: 0.75rem; padding-top: 0.75rem; display: flex; justify-content: space-between;">
-                        <span style="color: var(--text-primary); font-size: 0.875rem; font-weight: 600;">Session Total:</span>
-                        <span style="color: var(--accent-color); font-size: 0.875rem; font-weight: 600;">$0.002</span>
+<!-- AUTHENTICATED CONTENT -->
+<div id="quote-tool-content" style="display: none;">
+    <div id="quote-wrapper">
+        <div class="quote-container">
+            
+            <!-- STICKY HEADER -->
+            <div class="quote-header">
+                <h1>Quote <span>Automation</span> Tool</h1>
+                <div class="status-bar">
+                    <span class="badge">Beta</span>
+                    <div class="user-info-container">
+                        <span class="user-info" id="user-email-display">Loading...</span>
+                        <button class="logout-btn" onclick="logout()">Logout</button>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="panel-chat">
-            <div class="panel-chat-label">Ask about costs & budgets</div>
-            <div class="panel-input-area">
-                <input type="text" id="spendChatInput" placeholder="e.g., How can I save money?" onkeypress="handlePanelKeyPress(event, 'spend')">
-                <button onclick="sendPanelMessage('spend')">Send</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Mems Panel -->
-    <div class="side-panel" id="memsPanel">
-        <div class="panel-header">
-            <h2>🧠 Memory</h2>
-            <button class="close-panel" onclick="closePanel('mems')">×</button>
-        </div>
-        <div class="panel-content">
-            <div style="padding: 0.5rem;">
-                <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
-                    Your memory helps Raff remember you across conversations without forming biased patterns. Memory is stored separately from chat history for accurate, context-aware responses.
-                </p>
-
-                <div style="background: var(--primary-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; line-height: 1.8; color: var(--text-secondary); font-size: 0.875rem;">
-                    <span style="color: var(--accent-color); font-weight: 600;">Personal:</span> Lives in Melbourne, VIC. Enjoys specialty coffee and automation. Prefers direct communication style.
-                    
-                    <span style="display: block; margin-top: 1rem;"></span>
-                    
-                    <span style="color: var(--accent-color); font-weight: 600;">Professional:</span> CFO at Lyros Pty Ltd. Builds n8n workflows for business automation and customer applications. Focuses on cost-effective, maintainable solutions.
-                    
-                    <span style="display: block; margin-top: 1rem;"></span>
-                    
-                    <span style="color: var(--accent-color); font-weight: 600;">Writing Style:</span> Technical, concise, schema-first approach. Prefers bullet points and structured documentation.
-                    
-                    <span style="display: block; margin-top: 1rem;"></span>
-                    
-                    <span style="color: var(--accent-color); font-weight: 600;">Interests:</span> API integrations, workflow optimization, LLM applications, CrossFit, specialty coffee culture.
+            
+            <!-- ACCORDION SECTION 1: GENERATE NEW QUOTE -->
+            <div class="accordion-section">
+                <div class="accordion-header active" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <span class="accordion-icon">▸</span>
+                        <span>Generate New Quote</span>
+                    </div>
+                    <span class="accordion-chevron">▼</span>
+                </div>
+                <div class="accordion-content active">
+                    <div class="accordion-body">
+                        <div id="generate-feedback" class="feedback-message"></div>
+                        
+                        <form id="generate-quote-form">
+							<!-- ✨ NEW: Skip AI Processing Option -->
+                        <div class="form-group" style="background: rgba(16, 185, 129, 0.05); padding: 16px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin: 0;">
+                                <input type="checkbox" 
+                                       id="skip-ai-processing" 
+                                       name="skip_ai_processing"
+                                       style="width: 20px; height: 20px; cursor: pointer;">
+                                <span style="flex: 1;">
+                                    <strong style="color: #10b981; font-size: 14px;">My template already has [PLACEHOLDERS]</strong>
+                                    <p style="margin: 4px 0 0 0; font-size: 11px; color: #888; font-weight: 400; line-height: 1.5;">
+                                        Skip AI processing and extract placeholders directly from your template. 
+                                        Placeholders must be formatted like [CLIENT_NAME] or [PROJECT_ADDRESS].
+                                    </p>
+                                </span>
+                            </label>
+                        </div>
+                            <div class="form-group">
+                                <label>Select Registered Template <span class="required">*</span></label>
+                                <select name="template_id" id="template-selector" required>
+                                    <option value="">Choose a template...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="label-with-tooltip">
+                                    <label>Upload Information for Quote Generation</label>
+                                    <span class="tooltip tooltip-multiline" data-tooltip="Upload RFT, scope docs, or tender documents">?</span>
+                                </div>
+                                <div class="upload-zone" id="quote-upload-zone">
+                                    <div class="icon">📄</div>
+                                    <p style="font-weight: 600; margin-bottom: 4px;">Click to upload or drag and drop</p>
+                                    <p>PDF, DOCX, TXT up to 10MB</p>
+                                    <input type="file" id="quote-file-input" multiple accept=".pdf,.docx,.txt">
+                                </div>
+                                <div id="quote-file-list" class="file-list"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Add Voice Instructions (Optional)</label>
+                                <button type="button" class="btn btn-secondary btn-block" id="voice-record-btn">
+                                    🎤 Record Voice Note
+                                </button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Add Text Instructions (Optional)</label>
+                                <textarea name="text_instructions" id="text-instructions" placeholder="Type project details, special requirements, or additional context..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-block" id="generate-quote-btn">
+                                Generate Quote
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="panel-chat">
-            <div class="panel-chat-label">Manage your memory</div>
-            <div class="panel-input-area">
-                <input type="text" id="memsChatInput" placeholder="e.g., Update my coffee preference..." onkeypress="handlePanelKeyPress(event, 'mems')">
-                <button onclick="sendPanelMessage('mems')">Send</button>
+            
+            <!-- ACCORDION SECTION 2: MY TEMPLATES -->
+            <div class="accordion-section">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <span class="accordion-icon">▸</span>
+                        <span>My Templates</span>
+                    </div>
+                    <span class="accordion-chevron">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <button class="btn btn-primary btn-block" onclick="showRegisterForm()" style="margin-bottom: 16px;">
+                            + Register New Template
+                        </button>
+                        
+                        <div id="template-list"></div>
+                    </div>
+                </div>
             </div>
+            
+            <!-- ACCORDION SECTION 3: QUOTE HISTORY -->
+            <div class="accordion-section">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <span class="accordion-icon">▸</span>
+                        <span>Quote History</span>
+                    </div>
+                    <span class="accordion-chevron">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <div id="quote-history-list">
+                            <div class="empty-state">
+                                <p>No quotes generated yet</p>
+                                <p style="font-size: 11px;">Generate your first quote above</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TEMPLATE REGISTRATION MODAL -->
+            <div id="register-template-overlay" class="modal-overlay">
+                <div class="modal" style="max-width: 500px;">
+                    <h3>📄 Register New Template</h3>
+                    
+                    <div id="register-feedback" class="feedback-message"></div>
+                    
+                    <form id="template-registration-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label>Template Name <span class="required">*</span></label>
+                            <input type="text" name="template_name" placeholder="e.g., Standard Quote" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Industry <span class="required">*</span></label>
+                            <select name="industry" id="industry-selector" required>
+                                <option value="">Select your industry...</option>
+                                <option value="builder">Builder</option>
+                                <option value="electrician">Electrician</option>
+                                <option value="manufacturer">Manufacturer</option>
+                                <option value="auditor">Auditor</option>
+                                <option value="accountant">Accountant</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Register Quote Template <span class="required">*</span></label>
+                            <div class="upload-zone" id="template-upload-zone">
+                                <div class="icon">📄</div>
+                                <p style="font-weight: 600; margin-bottom: 4px;">Click to upload or drag and drop</p>
+                                <p>DOCX only, up to 10MB</p>
+                                <input type="file" name="template_file" id="template-file-input" accept=".docx" required>
+                            </div>
+                            <div id="template-file-preview" class="file-list"></div>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary" onclick="hideRegisterForm()">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="register-template-btn">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
         </div>
     </div>
 </div>

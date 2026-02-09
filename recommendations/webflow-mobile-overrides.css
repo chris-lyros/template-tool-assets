@@ -1,0 +1,110 @@
+/* Mobile-first UX override layer for Webflow quote automator */
+
+:root {
+  --tap-min-height: 44px;
+  --font-body-mobile: 14px;
+  --font-label-mobile: 14px;
+  --font-action-mobile: 15px;
+}
+
+/* Improve readability baseline */
+#quote-wrapper,
+#quote-wrapper p,
+#quote-wrapper li,
+#quote-wrapper input,
+#quote-wrapper select,
+#quote-wrapper textarea,
+#quote-wrapper button {
+  font-size: var(--font-body-mobile);
+}
+
+/* Better touch ergonomics */
+#quote-wrapper button,
+#quote-wrapper .btn,
+#quote-wrapper select,
+#quote-wrapper input,
+#quote-wrapper textarea,
+#quote-wrapper .accordion-header,
+#quote-wrapper .refine-tab {
+  min-height: var(--tap-min-height);
+}
+
+/* Strong focus style for laptop/keyboard */
+#quote-wrapper button:focus-visible,
+#quote-wrapper .btn:focus-visible,
+#quote-wrapper input:focus-visible,
+#quote-wrapper select:focus-visible,
+#quote-wrapper textarea:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+}
+
+/* Mobile action layout for template cards */
+@media (max-width: 767px) {
+  .template-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .template-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .template-actions .btn {
+    width: 100%;
+    justify-content: center;
+    font-size: var(--font-action-mobile) !important;
+    padding: 12px 14px !important;
+  }
+
+  .accordion-title {
+    font-size: 15px;
+  }
+
+  .user-info,
+  .badge,
+  .logout-btn {
+    font-size: 12px;
+  }
+
+  /* Bottom-sheet modal behavior */
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal,
+  .modal-large {
+    width: 100%;
+    max-width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    border-radius: 16px 16px 0 0;
+    margin: 0;
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  }
+
+  /* Sticky footer action zone */
+  #generate-quote-btn {
+    position: sticky;
+    bottom: 10px;
+    z-index: 20;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  .file-item {
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-remove {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 20px;
+  }
+}
